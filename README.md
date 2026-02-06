@@ -1,3 +1,43 @@
+# Uni-Bridge: Study Buddy Exchange 
+## Project Overview
+Uni-Bridge is a peer-to-peer knowledge exchange platform for university students. Our mission is to reduce academic isolation by enabling students to swap skills—for example, trading help with Database Design for support with Frontend Development.
+## The Team "The Gurkhas" Members:
+- Bhumika Pariyar: Repository Admin & Dev0ps
+- Sujita Gurung: Facilitator & UX/Requirements
+- Roman Rai: Backend & Docker lead
+- Avinash Sah Kanu: Ethics & Safety Officer
+- Smarika Singh Thakuri: Product Owner & Scrum Master
+
+## Project Description:
+Uni-Bridge is a peer-to-peer "Knowledge Exchange" platform designed specifically for university students. The project aims to bridge the gap between students who excel in certain technical areas and those who require additional support, fostering a collaborative campus community. Unlike traditional tutoring, Uni-Bridge operates on a "Skill-Swap" model, where students can trade their expertise. For example, a student proficient in Frontend design may offer help in exchange for support with Backend logic or Database management.
+
+The application will allow users to create detailed profiles highlighting their "Strong Modules" and "Areas for Improvement" based on their current university course. Through a filtered search system, users can find "Study Buddies" based on specific module codes.
+
+**Key Features include:**
+- Module-Based Matching: Connecting students within the same or complementary courses.
+- Skill-Swap Dashboard: A way for students to list what they can teach versus what they need to learn.
+- Campus Safety Integration: To address ethical concerns, the platform will suggest verified, high-traffic meeting locations such as the University Library or Student Union.
+
+By digitalising the process of finding study partners, Uni-Bridge reduces academic isolation and promotes a culture of shared learning and student wellbeing.
+
+## User Personas
+
+**Persona 1: The International Peer-Learner**
+- Name: Lucky Gurung
+- Background: 1st Year International Student (Software Engineering).
+- Bio: Jin is technically strong in logic and Java, but finds the fast-paced English lectures overwhelming. He is hesitant to ask questions in large groups.
+- Goal: To find a "Study Buddy" to review lecture notes with once a week to ensure he hasn't missed key technical terms.
+- Exchange Offering: High-level expertise in Java logic and Database design.
+
+**Persona 2: The Final Stressed by Deadlines**
+- Name: Siddhi Rai
+- Background: 3rd Year Computer Science Student.
+- Bio: Siddhi is a talented Frontend designer, but is currently struggling with the Backend requirements of her final project. She feels isolated working from home.
+- Goal: To find a partner or small group to work with in the library for "Sprint" study sessions to stay motivated.
+- Exchange Offering: Expertise in UI/UX Design and PUG templating.
+
+## Ethical
+
 # MySQL, PHPMyAdmin and Node.js (ready for Express development)
 
 This will install Mysql and phpmyadmin (including all dependencies to run Phpmyadmin) AND node.js
