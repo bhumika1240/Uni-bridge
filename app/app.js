@@ -39,7 +39,7 @@ app.get("/hello/:name", function(req, res) {
     // We can examine it in the console for debugging purposes
     console.log(req.params);
     //  Retrieve the 'name' parameter and use it in a dynamically generated page
-    res.send("Hello " + req.params.name);
+    res.send("Hell " + req.params.name);
 });
 
 // Start server on port 3000
