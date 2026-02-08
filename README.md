@@ -36,7 +36,22 @@ By digitalising the process of finding study partners, Uni-Bridge reduces academ
 - Goal: To find a partner or small group to work with in the library for "Sprint" study sessions to stay motivated.
 - Exchange Offering: Expertise in UI/UX Design and PUG templating.
 
-## Ethical
+## Ethical & Safety Considerations
+To ensure Uni-Bridge remains a safe and fair environment for all students, "The Gurkhas" have implemented the following framework:
+
+**1. Academic Integrity:**
+Uni-Bridge is a platform for peer-support and concept clarification. We strictly prohibit the sharing of live exam answers or completed assignment files. All users must agree to our Academic Integrity Policy upon sign-up, which outlines the difference between collaboration and collusion.
+
+**2. Physical Safety:**
+To ensure student safety during in-person study sessions, the application will:
+
+Recommend verified, high-traffic meeting locations on campus (e.g., University Library, Student Union).
+
+Include a "Safe Meeting Guide" for first-time sessions.
+
+**3. Data Privacy (GDPR):**
+We follow "Privacy by Design" principles. Student data (Name, University ID, and Modules) is stored securely in our MySQL database. We only collect the minimum information required to facilitate successful study matches, and we ensure the database is protected within our Docker environment.
+
 
 # MySQL, PHPMyAdmin and Node.js (ready for Express development)
 
