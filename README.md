@@ -8,17 +8,17 @@ Uni-Bridge is a peer-to-peer knowledge exchange platform for university students
 - Avinash Sah Kanu: Ethics & Safety Officer
 - Smarika Singh Thakuri: Product Owner & Scrum Master
 
-## 📍 Quick Navigation
+##  Quick Navigation
 - [Project Description](#project-description)
 - [User Personas](#user-personas)
 - [Ethical & Safety Framework](#ethical-safety-considerations)
 - [Project Documentation (Meetings & Full Docs)](#-project-documentation)
 - [Technical Setup (Docker Instructions)](#-getting-started-docker)
-- [Kanban Board](#kanban-board)
+- [Kanban Board](#kanban-board-Project-Tracking)
 
 ---
 
-## 📂 Project Documentation
+##  Project Documentation
 *For a deep dive into our planning and research, please see the files in our `/docs` folder:*
 
 - **[Meeting Minutes](./docs/meeting.md)**: Logs of our weekly stand-ups and sprint decisions.
@@ -97,7 +97,7 @@ Service Connectivity: We use a pre-configured db.js utility that handles MySQL q
 
 ---
 
-Kanban Board & Project Tracking
+## Kanban Board & Project Tracking
 Project planning and task tracking for Sprint 1 is managed using our GitHub Project Board. This allows us to maintain transparency and ensure all ethical and technical requirements are met before moving to development.
 
 View our live progress here: The Gurkhas Kanban Board
