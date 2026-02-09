@@ -71,7 +71,7 @@ We follow "Privacy by Design" principles. Student data (Name, University ID, and
 
 ---
 
-##  Technical Setup & Environment
+## Technical Setup & Environment
 > **Lead:** Roman Rai (Backend & Docker)
 
 To ensure that every member of **The Gurkhas** can develop, test, and run Uni-Bridge without "version mismatch" errors, we have containerized our entire stack using Docker. This ensures environment parity between Windows, macOS, and Linux users on our team.
