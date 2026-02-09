@@ -100,5 +100,4 @@ Service Connectivity: We use a pre-configured db.js utility that handles MySQL q
 ## Kanban Board & Project Tracking
 Project planning and task tracking for Sprint 1 is managed using our GitHub Project Board. This allows us to maintain transparency and ensure all ethical and technical requirements are met before moving to development.
 
-View our live progress here: The Gurkhas Kanban Board
-
+**View our live progress here:** [The Gurkhas Kanban Board](https://github.com/users/bhumika1240/projects/1)
