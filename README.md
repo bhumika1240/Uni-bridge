@@ -9,12 +9,12 @@ Uni-Bridge is a peer-to-peer knowledge exchange platform for university students
 - Smarika Singh Thakuri: Product Owner & Scrum Master
 
 ##  Quick Navigation
-- [Project Description](#project-description)
+- [Project Overview](#project-overview)
+- [The Team](#the-team-the-gurkhas-members)
 - [User Personas](#user-personas)
-- [Ethical & Safety Framework](#ethical-safety-considerations)
-- [Project Documentation (Meetings & Full Docs)](#-project-documentation)
-- [Technical Setup (Docker Instructions)](#-getting-started-docker)
-- [Kanban Board](#kanban-board-Project-Tracking)
+- [Ethical & Safety Framework](#ethical--safety-considerations)
+- [Technical Setup & Environment](#️technical-setup--environment)
+- [Kanban Board](#kanban-board--project-tracking)
 
 ---
 
@@ -71,7 +71,7 @@ We follow "Privacy by Design" principles. Student data (Name, University ID, and
 
 ---
 
-## 🛠️ Technical Setup & Environment
+##  Technical Setup & Environment
 > **Lead:** Roman Rai (Backend & Docker)
 
 To ensure that every member of **The Gurkhas** can develop, test, and run Uni-Bridge without "version mismatch" errors, we have containerized our entire stack using Docker. This ensures environment parity between Windows, macOS, and Linux users on our team.
