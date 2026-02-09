@@ -21,9 +21,9 @@ Uni-Bridge is a peer-to-peer knowledge exchange platform for university students
 ##  Project Documentation
 *For a deep dive into our planning and research, please see the files in our `/docs` folder:*
 
-- **[Meeting Minutes](./docs/meeting.md)**: Logs of our weekly stand-ups and sprint decisions.
+- **[Meeting Minutes](./docs/meetings.md)**: Logs of our weekly stand-ups and sprint decisions.
 - **[Full Ethical Framework](./docs/ETHICS.md)**: Detailed breakdown of safety and privacy.
-- **[Code of Conduct](./docs/CONDUCT.md)**: Team rules and collaboration standards.
+- **[Code of Conduct](./docs/CODE_OF_CONDUCT.md)**: Team rules and collaboration standards.
 
 ## Project Description:
 Uni-Bridge is a peer-to-peer "Knowledge Exchange" platform designed specifically for university students. The project aims to bridge the gap between students who excel in certain technical areas and those who require additional support, fostering a collaborative campus community. Unlike traditional tutoring, Uni-Bridge operates on a "Skill-Swap" model, where students can trade their expertise. For example, a student proficient in Frontend design may offer help in exchange for support with Backend logic or Database management.
