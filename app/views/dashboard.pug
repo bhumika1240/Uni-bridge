@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  .dashboard-container
+    .navbar
+      h1 Uni-Bridge
+
+    .dashboard-body
+      .sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      .main-content
+        h2 Welcome to Dashboard
+        .stats
+          .card
+            h3 Total Swaps
+            p 10
+          .card
+            h3 Points
+            p 120
+          .card
+            h3 New Messages
+            p 3
+
+        .section
+          h3 Skill Activity Feed
+          ul
+            li Completed a Python tutorial
+            li Started a guitar swap
+            li Joined a language exchange
+
+        .section
+          h3 Recent Requests
+          ul
+            li Web design help needed
+            li Looking for Spanish tutor
+            li Offering photography lessons
