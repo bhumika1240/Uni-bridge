@@ -4,6 +4,6 @@
 3.	**Conflict Resolution:** If a disagreement occurs (e.g., regarding project features), the team will hold a majority vote. If a tie occurs, the Facilitator (Sujita) has the deciding vote.
 4.	**Work Distribution:** Every member is responsible for their assigned task. If someone is struggling, they must ask for help early so the Product Owner (Smarika) can adjust the Kanban board.
 5.	**GitHub Etiquette:** No one shall "Force Push" to the main branch. All code must be tested locally using Roman's Docker setup before being committed.
-
+6. **Presentation Attendance:** All team members must be present for assessed presentations. Any member who is absent without valid, pre‑approved justification may receive a mark of zero for that component, and the lecturer reserves full authority to apply academic penalties as appropriate.
 
 **All team members agree to follow these guidelines to ensure smooth collaboration and successful project delivery.**
