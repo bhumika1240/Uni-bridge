@@ -1,52 +1,51 @@
 // controllers/loginController.js
-const User = require("../models/User"); // Your user model
+const bcrypt = require("bcrypt");
+const db = require("../config/db"); // adjust path to your db file
 
 class LoginController {
-  // Show login page
+
   showLogin(req, res) {
-    res.render("login"); // uses your login.pug
+    res.render("login");
   }
 
-  // Handle login POST
   async login(req, res) {
     const { email, password } = req.body;
 
     try {
-      // Look up user in DB
-      const user = await User.findOne({ email }); // adjust based on your DB
+      const users = await db.query(
+        "SELECT * FROM users WHERE email = ?",
+        [email]
+      );
 
-      if (!user) {
+      if (users.length === 0) {
         return res.render("login", { error: "Invalid email or password" });
       }
 
-      // Compare password (use bcrypt if passwords are hashed)
-      const isMatch = await user.comparePassword(password); // your model should handle this
+      const user = users[0];
+
+      const isMatch = await bcrypt.compare(password, user.password);
+
       if (!isMatch) {
         return res.render("login", { error: "Invalid email or password" });
       }
 
-      // ✅ Set user in session (store only plain data, not full model)
       req.session.user = {
         id: user.id,
         email: user.email,
-        // optional: include other safe info if needed
-        // name: user.name
       };
 
-      // 🔎 Debug log to confirm session is set
-      console.log("LOGIN SESSION:", req.session);
+      console.log("LOGIN SUCCESS:", req.session.user);
 
-      res.redirect("/dashboard"); // redirect to dashboard
+      res.redirect("/dashboard");
+
     } catch (err) {
-      console.error(err);
-      res.render("login", { error: "Something went wrong" });
+      console.error("LOGIN ERROR:", err);
+      res.render("login", { error: "Login error" });
     }
   }
 
-  // Logout
   logout(req, res) {
-    req.session.destroy((err) => {
-      if (err) return res.redirect("/dashboard");
+    req.session.destroy(() => {
       res.clearCookie("connect.sid");
       res.redirect("/login");
     });

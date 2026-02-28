@@ -8,14 +8,11 @@ services:
       - .:/src
     command: supervisor -e 'js,pug,html' index.js
     ports:
-      - "3001:3000" # Browser uses 3001, container Node uses 3000
+      - "3001:3000"
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - DB_USER=root
-      - DB_PASSWORD=yourpassword
-      - DB_NAME=unibridge
+    env_file:
+      - ./.env
 
   db:
     image: mysql:8.0
