@@ -102,5 +102,22 @@ Project planning and task tracking for Sprint 1 is managed using our GitHub Proj
 
 **View our live progress here:** [The Gurkhas Kanban Board](https://github.com/users/bhumika1240/projects/1)
 
+---
+
+---
+
+##  Sprint 3 Implementation (Current Status)
+In this sprint, the **The Gurkhas** transitioned from a conceptual framework to a functional **Dockerized MVP**.
+
+###  Core Features Implemented:
+- **US.1 Registration:** Integrated Express with MySQL to securely store student credentials.
+- **US.3 Expert Search:** Developed a dynamic search engine using SQL `LIKE` queries to filter by Module Code.
+- **US.8 & US.10 Profile Management:** Enabled users to update their bio and add "Teach Modules" directly via PUG forms.
+- **Relational Data Model:** Implemented Foreign Keys to link the `Users` and `Skills` tables for data integrity.
+
+###  Technical Validation
+- **Environment:** Verified identical performance across team environments using `docker-compose`.
+- **Database:** Tables initialized with seed data for testing "Lucky" and "Siddhi" (User Personas).
+- **Template Engine:** Utilized PUG mixins for reusable UI components (Header, Footer, Skill Cards).
 
 
