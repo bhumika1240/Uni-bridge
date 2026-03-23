@@ -32,10 +32,27 @@ block content
       input(type="email" name="email" placeholder="Email Address" required)
       input(type="password" name="password" placeholder="Password" required)
 
+      //- Policy Terms Box
+      .policy-box(style="border:1px solid #ccc; padding:15px; margin-top:15px; height:160px; overflow-y:auto; background:#f9f9f9; font-size:14px;")
+        h3(style="margin-top:0;") Terms & Conditions
+        ul
+          li
+            strong Academic Integrity:
+            |  Swapping finished assignments or exam solutions is strictly prohibited to prevent collusion.
+          li
+            strong Student Safety:
+            |  Users agree to meet only in university-verified "Safe Zones" (e.g., Library, Student Union).
+          li
+            strong Data Minimalism:
+            |  Only essential data (Name, Student ID, Modules) is collected and stored securely.
+          li
+            strong Verification:
+            |  Users must be verified students of the university community.
+
       //- Policy Checkbox
-      .policy
+      .policy(style="margin-top:10px;")
         input(type="checkbox" name="policy" id="policy" required)
-        label(for="policy") I understand the policy and terms
+        label(for="policy") I understand and agree to the Terms & Conditions
 
       //- Submit Button
       button(type="submit") Sign Up

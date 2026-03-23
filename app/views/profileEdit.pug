@@ -1,0 +1,97 @@
+//- views/profileEdit.pug
+extends layout
+
+block content
+  - const safeUser = user || {}
+  - safeUser.skills = safeUser.skills || []
+  - safeUser.availability = safeUser.availability || []
+
+  // Top Navbar
+  .navbar
+    h1 Uni-Bridge
+
+  // Dashboard layout
+  .dashboard-body
+
+    // Sidebar
+    .sidebar
+      ul
+        li
+          a(href="/dashboard") Dashboard
+        li
+          a.active(href="/profile/view") My Profile
+        li
+          a(href="/myswaps") My Swaps
+        li
+          a(href="/browseskills") Browse Skills
+        li
+          a(href="/messages") Messages
+        li
+          a(href="/settings") Settings
+        li
+          a(href="/logout") Logout
+
+    // Main content
+    .main-content
+      .container.mt-4
+        h1 Edit My Profile
+
+        // Profile picture upload
+        .profile-picture
+          img.profile-edit-pic(
+            src=safeUser.profilePicture || "/images/default-avatar.png",
+            alt="Profile Picture"
+          )
+          form(method="POST", action="/profile/upload-picture", enctype="multipart/form-data")
+            input(type="file", name="profilePicture", accept="image/*")
+            button.btn.btn-primary(type="submit") Upload Picture
+
+        hr
+
+        // Profile skills and availability form
+        form(method="POST", action="/profile/save")
+          h3 Skills
+          .skills-container
+            each skill in safeUser.skills
+              .skill-row
+                input.form-control(type="text", name="skills", value=skill)
+                button.btn.btn-danger(type="button", onclick="this.parentNode.remove()") Remove
+
+            // Empty field to allow adding a new skill
+            .skill-row
+              input.form-control(type="text", name="skills", placeholder="Add new skill")
+              button.btn.btn-danger(type="button", onclick="this.parentNode.remove()") Remove
+
+            // Add skill button
+            button.btn.btn-secondary(type="button", onclick="addSkillInput()") Add Skill
+
+          hr
+
+          h3 Weekly Availability
+          .availability-container
+            each day in ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+              - const dayData = safeUser.availability.find(a => a.day === day) || {}
+              - const checked = !!dayData.day
+              .availability-row
+                input.form-check-input(
+                  type="checkbox",
+                  name=`availability_day_${day}`,
+                  id=`availability_${day}`,
+                  checked=checked
+                )
+                label.form-check-label(for=`availability_${day}`) #{day}
+                input.form-control(type="time", name=`from_${day}`, value=dayData.from || "09:00")
+                span.to-separator - 
+                input.form-control(type="time", name=`to_${day}`, value=dayData.to || "17:00")
+
+          button.btn.btn-primary.mt-3(type="submit") Save Profile
+
+        // Script for dynamic skill inputs
+        script.
+          function addSkillInput() {
+            const container = document.querySelector('.skills-container');
+            const row = document.createElement('div');
+            row.classList.add('skill-row');
+            row.innerHTML = '<input type="text" name="skills" class="form-control" placeholder="Add new skill"> <button type="button" class="btn btn-danger" onclick="this.parentNode.remove()">Remove</button>';
+            container.insertBefore(row, container.querySelector('button.btn-secondary'));
+          }

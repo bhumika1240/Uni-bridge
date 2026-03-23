@@ -1,49 +1,62 @@
-// controllers/DashboardController.js
-class DashboardController {
-  // Dashboard page
-  dashboard(req, res) {
-    // Optional: Ensure user is logged in
-    if (!req.user) return res.redirect("/login");
+const User = require("../models/User");
 
-    res.render("dashboard", { user: req.user });
+class DashboardController {
+  // Helper to get full user data including skills/availability
+  async getFullUser(req) {
+    const email = req.session.user?.email;
+    if (!email) return null;
+    return await User.findByEmail(email);
   }
 
-  // Profile page
-  profile(req, res) {
-    // Ensure user is logged in
-    if (!req.user) return res.redirect("/login");
+  // Dashboard page
+  async dashboard(req, res) {
+    const user = await this.getFullUser(req);
+    if (!user) return res.redirect("/login");
 
-    // Pass logged-in user to profile template
-    res.render("profile", { user: req.user });
+    res.render("dashboard", { user });
+  }
+
+  // Profile page (The one that was crashing)
+  async profile(req, res) {
+    const user = await this.getFullUser(req);
+    if (!user) return res.redirect("/login");
+
+    // FIX: Changed "profile" to "profileView" to match your filename
+    res.render("profileView", { user });
   }
 
   // My Swaps page
-  myswaps(req, res) {
-    if (!req.user) return res.redirect("/login");
+  async myswaps(req, res) {
+    const user = await this.getFullUser(req);
+    if (!user) return res.redirect("/login");
 
-    res.render("myswaps", { user: req.user });
+    res.render("myswaps", { user });
   }
 
   // Browse Skills page
-  browseskills(req, res) {
-    if (!req.user) return res.redirect("/login");
+  async browseskills(req, res) {
+    const user = await this.getFullUser(req);
+    if (!user) return res.redirect("/login");
 
-    res.render("browseskills", { user: req.user });
+    res.render("browseskills", { user });
   }
 
   // Messages page
-  messages(req, res) {
-    if (!req.user) return res.redirect("/login");
+  async messages(req, res) {
+    const user = await this.getFullUser(req);
+    if (!user) return res.redirect("/login");
 
-    res.render("messages", { user: req.user });
+    res.render("messages", { user });
   }
 
   // Settings page
-  settings(req, res) {
-    if (!req.user) return res.redirect("/login");
+  async settings(req, res) {
+    const user = await this.getFullUser(req);
+    if (!user) return res.redirect("/login");
 
-    res.render("settings", { user: req.user });
+    res.render("settings", { user });
   }
 }
 
+// Export as a new instance
 module.exports = new DashboardController();

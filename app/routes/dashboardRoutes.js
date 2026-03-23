@@ -1,14 +1,28 @@
-// routes/dashboardRoutes.js
 const express = require("express");
 const router = express.Router();
-const requireLogin = require("../middleware/authMiddleware"); 
+const requireLogin = require("../middleware/authMiddleware");
 const dashboardController = require("../controllers/DashboardController");
+const BrowseskillController = require("../controllers/BrowseskillController");
 
-router.get("/dashboard", requireLogin, dashboardController.dashboard);
-router.get("/profile", requireLogin, dashboardController.profile);
-router.get("/myswaps", requireLogin, dashboardController.myswaps);
-router.get("/browseskills", requireLogin, dashboardController.browseskills);
-router.get("/messages", requireLogin, dashboardController.messages);
-router.get("/settings", requireLogin, dashboardController.settings);
+// Main Dashboard
+router.get("/dashboard", requireLogin, (req, res) => dashboardController.dashboard(req, res));
 
-module.exports = router; // ✅ export router directly
+// My Profile - Updated to match the '/profile/view' link in your Pug Sidebar
+router.get("/profile/view", requireLogin, (req, res) => dashboardController.profile(req, res));
+
+// Fallback for just '/profile' if needed
+router.get("/profile", requireLogin, (req, res) => dashboardController.profile(req, res));
+
+// My Swaps
+router.get("/myswaps", requireLogin, (req, res) => dashboardController.myswaps(req, res));
+
+// Browse Skills
+router.get("/browseskills", requireLogin, BrowseskillController.viewSearch);
+
+// Messages
+router.get("/messages", requireLogin, (req, res) => dashboardController.messages(req, res));
+
+// Settings
+router.get("/settings", requireLogin, (req, res) => dashboardController.settings(req, res));
+
+module.exports = router;

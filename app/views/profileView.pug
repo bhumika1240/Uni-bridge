@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  - const safeUser = user || {}
+
+  // Top Navbar
+  .navbar
+    h1 Uni-Bridge
+
+  // Dashboard Layout
+  .dashboard-body
+
+    // Sidebar
+    .sidebar
+      ul
+          li: a(href="/dashboard") Dashboard
+          li: a.active(href="/profile/view") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+    // Main Content
+    .main-content
+      .container.mt-4
+
+        // Profile Header
+        .profile-header
+          img.profile-pic-mini(
+            src=safeUser.profilePicture || "/images/default-avatar.png",
+            alt="Profile Picture"
+          )
+          h1 #{safeUser.firstname} #{safeUser.lastname}
+
+        // Profile Info
+        .profile-details
+          p
+            strong Skills: 
+            //- Changed this line to handle the array properly
+            if safeUser.skills && safeUser.skills.length > 0
+              span= safeUser.skills.join(', ')
+            else
+              span N/A
+
+          h3 Availability
+          if safeUser.availability && safeUser.availability.length > 0
+            ul
+              each slot in safeUser.availability
+                li #{slot.day}: #{slot.from} - #{slot.to}
+          else
+            p N/A
+
+          a.btn.btn-primary.mt-3(href="/profile/edit") Edit My Profile

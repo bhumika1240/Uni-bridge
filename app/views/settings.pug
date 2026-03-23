@@ -1,5 +1,96 @@
 extends layout
 
 block content
-  h1 Messages
-  p View your messages here.
+  .dashboard-container
+    .navbar
+      h1 Uni-Bridge
+
+    .dashboard-body
+      // Sidebar
+      .sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile/view") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a.active(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      // Main content
+      .main-content
+        .container.mt-4
+          h2 Account Settings
+
+          // ===== Profile Info Update =====
+          .section
+            h3 Update Profile Information
+            if errorProfile
+              .alert.alert-danger= errorProfile
+            if successProfile
+              .alert.alert-success= successProfile
+
+            form(action="/settings/update" method="POST")
+              .mb-3
+                label(for="firstname") First Name
+                input#firstname.form-control(
+                  type="text",
+                  name="firstname",
+                  value=user.firstname || "",
+                  required
+                )
+
+              .mb-3
+                label(for="lastname") Last Name
+                input#lastname.form-control(
+                  type="text",
+                  name="lastname",
+                  value=user.lastname || "",
+                  required
+                )
+
+              .mb-3
+                label(for="email") Email
+                input#email.form-control(
+                  type="email",
+                  name="email",
+                  value=user.email || "",
+                  required
+                )
+
+              button.btn.btn-success.mt-2(type="submit") Update Profile
+
+          // ===== Password Change =====
+          .section.mt-4
+            h3 Change Password
+            if errorPassword
+              .alert.alert-danger= errorPassword
+            if successPassword
+              .alert.alert-success= successPassword
+
+            form(action="/settings/change-password" method="POST")
+              .mb-3
+                label(for="currentPassword") Current Password
+                input#currentPassword.form-control(
+                  type="password",
+                  name="currentPassword",
+                  required
+                )
+
+              .mb-3
+                label(for="newPassword") New Password
+                input#newPassword.form-control(
+                  type="password",
+                  name="newPassword",
+                  required
+                )
+
+              .mb-3
+                label(for="confirmPassword") Confirm New Password
+                input#confirmPassword.form-control(
+                  type="password",
+                  name="confirmPassword",
+                  required
+                )
+
+              button.btn.btn-primary.mt-2(type="submit") Change Password

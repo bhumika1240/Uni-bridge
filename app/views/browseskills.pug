@@ -1,5 +1,36 @@
+//- views/browseskills.pug
 extends layout
 
 block content
-  h1 Browse Skills
-  p Browse available skills here.
+  .dashboard-container
+    .navbar
+      h1 Uni-Bridge
+
+    .dashboard-body
+      .sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a.active(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      .main-content
+        h2 Browse Skills
+        form(action="/browseskills/search" method="POST")
+          input(type="text" name="skill" placeholder="Enter skill/module" value=query)
+          button(type="submit") Search
+
+        if error
+          p.error= error
+
+        if users && users.length
+          ul
+            each user in users
+              li
+                strong= user.firstname + " " + user.lastname
+                |  — Skills: #{user.skills}
+        else if query
+          p No users found for "#{query}"

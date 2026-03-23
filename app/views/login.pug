@@ -1,12 +1,25 @@
+//- views/login.pug
 extends layout.pug
 
 block content
   .container
-    h1 Uni-Bridge
+    h1 Uni-Bridge Login
+
+    //- Display error if login failed
+    if error
+      p(style="color:red; margin-bottom: 10px") #{error}
+
     form(action="/login" method="POST")
-      input(type="email" name="email" placeholder="Email" required)
-      input(type="password" name="password" placeholder="Password" required)
-      button(type="submit") Login
+      div
+        label(for="email") Email
+        input(type="email" name="email" id="email" placeholder="Enter your email" required)
+      div
+        label(for="password") Password
+        input(type="password" name="password" id="password" placeholder="Enter your password" required)
+      div
+        button(type="submit") Login
+
     .signup
-      | Don't have an account? 
-      a(href="/signup") Sign Up
+      p
+        | Don't have an account? 
+        a(href="/signup") Sign Up

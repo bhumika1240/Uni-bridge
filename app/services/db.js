@@ -1,45 +1,42 @@
-require("dotenv").config(); // Load environment variables
+// services/db.js
+require("dotenv").config();
 const mysql = require("mysql2/promise");
 
-/**
- * MySQL connection pool
- * Uses environment variables for security
- */
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "db",
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
+  port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "unibridge",
+  database: process.env.DB_NAME || "uni-bridge",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
-/**
- * Test connection immediately
- */
+// Test connection
 (async () => {
   try {
-    const connection = await pool.getConnection();
+    const conn = await pool.getConnection();
     console.log("✅ MySQL Connected Successfully");
-    connection.release();
+    conn.release();
   } catch (err) {
-    console.error("❌ MySQL Connection Failed:");
-    console.error("Message:", err.message);
-    console.error("Code:", err.code);
+    console.error("❌ MySQL Connection Failed:", err.message);
   }
 })();
 
 /**
- * Execute a query
- * @param {string} sql - SQL query string
- * @param {Array} params - Values for prepared statement
- * @returns {Promise<Array>} - Result rows
+ * Execute SQL query
+ * Use .query instead of .execute to support bulk inserts (nested arrays)
  */
 async function query(sql, params = []) {
-  const [rows] = await pool.execute(sql, params);
-  return rows;
+  try {
+    // FIX: Changed .execute to .query
+    const [result] = await pool.query(sql, params); 
+    return result;
+  } catch (err) {
+    console.error("DB Query Error:", err.message);
+    throw err;
+  }
 }
 
-module.exports = { query };
+module.exports = { query, pool };
