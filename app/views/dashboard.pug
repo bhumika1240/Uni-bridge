@@ -1,11 +1,8 @@
 extends layout
 
 block content
-  - const safeUser = user || {}
-
   .dashboard-container
-    .navbar
-      h1 Uni-Bridge
+    .navbar: h1 Uni-Bridge
 
     .dashboard-body
       .sidebar
@@ -19,30 +16,13 @@ block content
           li: a(href="/logout") Logout
 
       .main-content
-        // Welcome Message With Name
-        h2 Welcome to Dashboard, #{safeUser.firstname} 👋
-
-        .stats
-          .card
-            h3 Total Swaps
-            p 10
-          .card
-            h3 Points
-            p 120
-          .card
-            h3 New Messages
-            p 3
-
-        .section
-          h3 Skill Activity Feed
-          ul
-            li Completed a Python tutorial
-            li Started a guitar swap
-            li Joined a language exchange
-
-        .section
-          h3 Recent Requests
-          ul
-            li Web design help needed
-            li Looking for Spanish tutor
-            li Offering photography lessons
+        //- Ensure this h2 is indented exactly the same as the sidebar div
+        h2 Welcome to Dashboard, #{user.firstname} 👋
+        
+        .stats-grid
+          .stat-card
+            h3 Skills
+            p You have #{skillCount} skills listed.
+          .stat-card
+            h3 Swaps
+            p You have #{user.pendingSwaps} pending requests.

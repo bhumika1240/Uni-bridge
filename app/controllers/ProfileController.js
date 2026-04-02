@@ -4,15 +4,11 @@ const path = require("path");
 const fs = require("fs");
 
 const ProfileController = {
-  // Multer setup for profile picture uploads
   uploadMiddleware: () => {
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
-        // Pointing to your static uploads folder
         const uploadDir = path.join(__dirname, "../public/uploads");
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
+        if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
         cb(null, uploadDir);
       },
       filename: (req, file, cb) => {
@@ -22,58 +18,54 @@ const ProfileController = {
     return multer({ storage }).single("profilePicture");
   },
 
-  // Show profile view
   showProfile: async (req, res) => {
     try {
       const email = req.session.user?.email;
       if (!email) return res.redirect("/login");
-
       const user = await User.findByEmail(email);
       if (!user) return res.status(404).send("User not found");
+      
+      // Ensure JSON strings are objects for Pug
+      if (user.skills && typeof user.skills === 'string') user.skills = JSON.parse(user.skills);
+      if (user.availability && typeof user.availability === 'string') user.availability = JSON.parse(user.availability);
 
-      res.render("profileView", { user });
+      res.render("profileView", { user, title: "My Profile" });
     } catch (err) {
-      console.error(err);
+      console.error("Profile View Error:", err);
       res.status(500).send("Server error");
     }
   },
 
-  // Show profile edit
   showEditProfile: async (req, res) => {
     try {
       const email = req.session.user?.email;
       if (!email) return res.redirect("/login");
-
       const user = await User.findByEmail(email);
       if (!user) return res.status(404).send("User not found");
 
-      res.render("profileEdit", { user });
+      if (user.skills && typeof user.skills === 'string') user.skills = JSON.parse(user.skills);
+      if (user.availability && typeof user.availability === 'string') user.availability = JSON.parse(user.availability);
+
+      res.render("profileEdit", { user, title: "Edit Profile" });
     } catch (err) {
-      console.error(err);
+      console.error("Edit Profile Error:", err);
       res.status(500).send("Server error");
     }
   },
 
-  // Save profile edits (Skills and Availability)
   saveProfile: async (req, res) => {
     try {
       const email = req.session.user?.email;
       if (!email) return res.redirect("/login");
-
       const user = await User.findByEmail(email);
       if (!user) return res.status(404).send("User not found");
 
-      // Handle Skills
       let skills = [];
       if (req.body.skills) {
-        if (Array.isArray(req.body.skills)) {
-          skills = req.body.skills.map(s => s.trim()).filter(Boolean);
-        } else if (typeof req.body.skills === "string") {
-          skills = req.body.skills.split(",").map(s => s.trim()).filter(Boolean);
-        }
+        skills = Array.isArray(req.body.skills) ? req.body.skills : [req.body.skills];
+        skills = skills.map(s => s.trim()).filter(Boolean);
       }
 
-      // Handle Availability
       const availability = [];
       const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
       days.forEach(day => {
@@ -86,42 +78,29 @@ const ProfileController = {
         }
       });
 
-      // Update the user profile in DB
       await user.updateProfile({ skills, availability });
-
       res.redirect("/profile/view");
     } catch (err) {
-      console.error(err);
+      console.error("Save Profile Error:", err);
       res.status(500).send("Server error");
     }
   },
 
-  // Upload profile picture
   uploadPicture: async (req, res) => {
     try {
       const email = req.session.user?.email;
       if (!email) return res.redirect("/login");
-
       const user = await User.findByEmail(email);
       if (!user) return res.status(404).send("User not found");
 
       if (req.file) {
-        // Delete old profile picture if it's not the default one
-        if (user.profilePicture && !user.profilePicture.includes("default-avatar.png")) {
-          const oldPath = path.join(__dirname, "../public", user.profilePicture);
-          if (fs.existsSync(oldPath)) {
-            fs.unlinkSync(oldPath);
-          }
-        }
-        
-        // Save new path to DB
         const newPath = `/uploads/${req.file.filename}`;
         await user.updateProfilePicture(newPath);
+        req.session.user.profilePicture = newPath;
       }
-
       res.redirect("/profile/view");
     } catch (err) {
-      console.error(err);
+      console.error("Upload Error:", err);
       res.status(500).send("Server error");
     }
   }

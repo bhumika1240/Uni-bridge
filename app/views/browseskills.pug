@@ -1,36 +1,90 @@
-//- views/browseskills.pug
 extends layout
 
 block content
-  .dashboard-container
-    .navbar
-      h1 Uni-Bridge
+  //- 1. Ensure a safe user object for the header/sidebar
+  - const safeUser = user || {}
 
-    .dashboard-body
-      .sidebar
-        ul
-          li: a(href="/dashboard") Dashboard
-          li: a(href="/profile") My Profile
-          li: a(href="/myswaps") My Swaps
-          li: a.active(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a(href="/settings") Settings
-          li: a(href="/logout") Logout
+  // Top Navbar
+  .navbar
+    h1 Uni-Bridge
 
-      .main-content
-        h2 Browse Skills
-        form(action="/browseskills/search" method="POST")
-          input(type="text" name="skill" placeholder="Enter skill/module" value=query)
-          button(type="submit") Search
+  // Dashboard Layout (Matches your Profile template)
+  .dashboard-body
 
+    // Sidebar
+    .sidebar
+      ul
+        li: a(href="/dashboard") Dashboard
+        li: a(href="/profile/view") My Profile
+        li: a(href="/myswaps") My Swaps
+        li: a.active(href="/browseskills") Browse Skills
+        li: a(href="/messages") Messages
+        li: a(href="/settings") Settings
+        li: a(href="/logout") Logout
+
+    // Main Content
+    .main-content
+      .container.mt-4
+        
+        // Page Header
+        .header-section.mb-4
+          h2 Browse Skills
+          p.text-muted Find students who have the skills you want to learn.
+
+        // Search Form (Styled to match your layout)
+        form.search-form(action="/browseskills/search" method="POST")
+          .input-group.mb-3
+            input.form-control(
+              type="text" 
+              name="skill" 
+              placeholder="Enter skill (e.g. Python, Accounting, Java)..." 
+              value=query || ""
+              required
+            )
+            button.btn.btn-primary(type="submit") 
+              i.fas.fa-search 
+              |  Search
+
+        hr
+
+        //- 1. Error Message Handling
         if error
-          p.error= error
+          .alert.alert-warning.mt-3.fade.show
+            strong Notice: 
+            | #{error}
 
-        if users && users.length
-          ul
-            each user in users
-              li
-                strong= user.firstname + " " + user.lastname
-                |  — Skills: #{user.skills}
-        else if query
-          p No users found for "#{query}"
+        //- 2. Results Display Logic
+        if users && users.length > 0
+          .results-list.mt-4
+            h4.mb-3 Experts found for "#{query}"
+            each foundUser in users
+              .card.mb-3.shadow-sm
+                .card-body.d-flex.align-items-center
+                  img.profile-pic-mini.me-3(
+                    src=foundUser.profile_picture || "/images/default-avatar.png"
+                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
+                  )
+                  
+                  .info
+                    h5.mb-1= foundUser.firstname + " " + foundUser.lastname
+                    p.mb-0.text-muted 
+                      strong Skills: 
+                      span.badge.bg-light.text-dark.border= foundUser.all_skills || "No skills listed"
+                  
+                  .ms-auto
+                    a.btn.btn-outline-primary.btn-sm(href=`/profile/user/${foundUser.id}`) 
+                      | View Profile 
+                      i.fas.fa-chevron-right
+
+        else if query && !error
+          //- Empty State (No results found)
+          .text-center.mt-5.no-results-state
+            i.fas.fa-search-minus.fa-3x.text-muted.mb-3
+            p.mt-3.text-muted No users found matching "#{query}". Try a broader term.
+        
+        else if !query
+          //- Initial State (Before searching)
+          .text-center.mt-5.p-5.initial-welcome-state
+            i.fas.fa-lightbulb.fa-3x.text-warning.mb-3
+            h4 Ready to learn?
+            p.text-muted Enter a subject or module code above to find available mentors.

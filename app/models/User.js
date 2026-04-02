@@ -1,8 +1,15 @@
+/**
+ * User.js Model
+ * Handles all database interactions for the User entity, 
+ * including Skills and Availability relationships.
+ */
+
 const db = require("../services/db");
 
 class User {
   /**
-   * Constructor with safety defaults to prevent "undefined" errors
+   * Constructor: Maps database rows to a JavaScript Object.
+   * Uses safety defaults to prevent "undefined" errors in the Pug views.
    */
   constructor(data = {}) {
     this.id = data.id || null;
@@ -14,12 +21,42 @@ class User {
     this.password = data.password || "";
     this.role = data.role || "user";
     this.profilePicture = data.profile_picture || "/images/default-avatar.png";
+    
+    // all_skills is a virtual field populated during search via GROUP_CONCAT
+    this.all_skills = data.all_skills || ""; 
+    
+    // Arrays for detailed profile views
     this.skills = data.skills || [];
     this.availability = data.availability || [];
   }
 
   /**
-   * Find user by email (Used for Login and Session fetching)
+   * CROSS-TABLE SEARCH: Finds users based on the 'skills' table.
+   * Uses INNER JOIN to connect users (u) and skills (s).
+   */
+  static async findBySkill(skillName) {
+    try {
+      const sql = `
+        SELECT u.id, u.firstname, u.lastname, u.profile_picture, 
+               GROUP_CONCAT(s.skill SEPARATOR ', ') as all_skills
+        FROM users u
+        INNER JOIN skills s ON u.id = s.user_id
+        WHERE u.id IN (
+            SELECT user_id FROM skills WHERE skill LIKE ?
+        )
+        GROUP BY u.id
+      `;
+      // Use %wildcards% so "Java" matches "JavaScript" or "Advanced Java"
+      const results = await db.query(sql, [`%${skillName.trim()}%`]);
+      return results; 
+    } catch (err) {
+      console.error("DB Error in findBySkill:", err);
+      return [];
+    }
+  }
+
+  /**
+   * Fetches a user by email and populates their full profile.
    */
   static async findByEmail(email) {
     try {
@@ -29,11 +66,11 @@ class User {
       if (rows && rows.length > 0) {
         const user = new User(rows[0]);
 
-        // Fetch associated skills
+        // Populate skills from skills table
         const skillsRows = await db.query("SELECT skill FROM skills WHERE user_id = ?", [user.id]);
         user.skills = skillsRows.map(r => r.skill);
 
-        // Fetch associated availability
+        // Populate availability from availability table
         const availRows = await db.query(
           "SELECT day, from_time as `from`, to_time as `to` FROM availability WHERE user_id = ?",
           [user.id]
@@ -50,7 +87,7 @@ class User {
   }
 
   /**
-   * Find user by ID (Used for viewing other students' profiles)
+   * Fetches a single user by ID for profile viewing.
    */
   static async findById(id) {
     try {
@@ -79,29 +116,7 @@ class User {
   }
 
   /**
-   * Search for users by a specific skill (Used by BrowseskillController)
-   */
-  static async findBySkill(skill) {
-    try {
-      // Joins users and skills, grouping all skills into a single string for display
-      const sql = `
-        SELECT u.id, u.firstname, u.lastname, u.profile_picture, 
-               (SELECT GROUP_CONCAT(skill SEPARATOR ', ') FROM skills WHERE user_id = u.id) as all_skills
-        FROM users u
-        JOIN skills s ON u.id = s.user_id
-        WHERE s.skill LIKE ?
-        GROUP BY u.id
-      `;
-      const rows = await db.query(sql, [`%${skill}%`]);
-      return rows; 
-    } catch (err) {
-      console.error("DB Error in findBySkill:", err);
-      return [];
-    }
-  }
-
-  /**
-   * Create a new user (Used by AuthController Signup)
+   * Registration: Saves basic user info.
    */
   async save() {
     try {
@@ -118,18 +133,18 @@ class User {
   }
 
   /**
-   * Update Profile Skills and Availability (Used by ProfileController)
+   * Syncs Skills and Availability (Delete-then-Insert pattern).
    */
   async updateProfile({ skills = [], availability = [] } = {}) {
     try {
-      // Handle Skills: Delete old and insert new
+      // 1. Clear and Re-insert Skills
       await db.query("DELETE FROM skills WHERE user_id = ?", [this.id]);
       if (skills.length > 0) {
         const skillValues = skills.map(s => [this.id, s]);
         await db.query("INSERT INTO skills (user_id, skill) VALUES ?", [skillValues]);
       }
 
-      // Handle Availability: Delete old and insert new
+      // 2. Clear and Re-insert Availability
       await db.query("DELETE FROM availability WHERE user_id = ?", [this.id]);
       if (availability.length > 0) {
         const availValues = availability.map(a => [this.id, a.day, a.from, a.to]);
@@ -143,7 +158,7 @@ class User {
   }
 
   /**
-   * Update the profile picture path
+   * Updates profile image path.
    */
   async updateProfilePicture(path) {
     try {

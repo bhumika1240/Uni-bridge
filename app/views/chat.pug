@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  .dashboard-container
+    .navbar
+      .nav-logo Uni-Bridge
+
+
+    .dashboard-body
+      aside.sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile/view") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a.active(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      main.chat-main
+        .chat-header
+          a.back-btn(href="/messages") Back
+          .user-info
+            h3 #{otherUser.firstname} #{otherUser.lastname}
+            span Online
+
+        //- The Scrollable Message Area
+        .message-list#chatBox
+          if chatHistory && chatHistory.length > 0
+            each msg in chatHistory
+              //- Logic to determine side
+              - const isMe = (msg.sender_id == user.id)
+              .message-wrapper(class=isMe ? "me" : "them")
+                .bubble
+                  p= msg.content
+                  span.timestamp= new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+          else
+            .empty-chat
+              p No messages yet. Start the conversation!
+
+        //- The Input Bar
+        .chat-input-area
+          form(action="/chat/send" method="POST")
+            input(type="hidden" name="receiver_id" value=otherUser.id)
+            input(type="text" name="content" placeholder="Type a message..." required autocomplete="off" autofocus)
+            button(type="submit") Send
+
+  script.
+    window.onload = function() {
+      const chatBox = document.getElementById('chatBox');
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    };

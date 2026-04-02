@@ -1,5 +1,72 @@
 extends layout
 
 block content
-  h1 My Swaps
-  p This is your swaps page.
+  .dashboard-container
+    .navbar
+      h1 Uni-Bridge
+
+    .dashboard-body
+      .sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile/view") My Profile
+          li: a.active(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      .main-content
+        h2 My Skill Swaps
+        
+        if swaps && swaps.length > 0
+          .swaps-list
+            each swap in swaps
+              //- This class (status-pending, status-accepted, etc.) helps with styling
+              .swap-card(class=`status-${swap.status.toLowerCase()}`)
+                .swap-header
+                  span.status-badge(class=`badge-${swap.status.toLowerCase()}`) #{swap.status.toUpperCase()}
+                  span.date Sent on: #{new Date(swap.created_at).toLocaleDateString()}
+                
+                .swap-details
+                  //- Case 1: You are the one who SENT the request
+                  if swap.requester_id == user.id
+                    .swap-info
+                      img.avatar-mini(src=swap.provider_pic || "/images/default-avatar.png")
+                      div
+                        p You requested <strong>#{swap.skill_requested}</strong> from <strong>#{swap.provider_name}</strong>
+                        p.offer-text You offered to teach: #{swap.skill_offered}
+                  
+                  //- Case 2: You are the one RECEIVING the request
+                  else
+                    .swap-info
+                      img.avatar-mini(src=swap.requester_pic || "/images/default-avatar.png")
+                      div
+                        p <strong>#{swap.requester_name}</strong> wants to learn <strong>#{swap.skill_requested}</strong> from you
+                        p.offer-text They offered to teach: #{swap.skill_offered}
+                
+                //- ACTIONS: Only show buttons if pending AND you are the recipient (provider)
+                if swap.status === 'pending' && swap.provider_id == user.id
+                  .swap-actions
+                    form(action="/swaps/action" method="POST" style="display:inline")
+                      input(type="hidden" name="swapId" value=swap.id)
+                      input(type="hidden" name="action" value="accepted")
+                      button.btn-accept(type="submit") Accept Request
+                    
+                    form(action="/swaps/action" method="POST" style="display:inline")
+                      input(type="hidden" name="swapId" value=swap.id)
+                      input(type="hidden" name="action" value="rejected")
+                      button.btn-decline(type="submit") Decline
+                
+                //- If accepted, show a link to message the person
+                if swap.status === 'accepted'
+                  .swap-actions
+                    - const partnerId = (swap.requester_id == user.id) ? swap.provider_id : swap.requester_id
+                    a.btn-message(href=`/messages/chat/${partnerId}`) Send Message
+
+        else
+          .empty-state
+            .empty-icon 🤝
+            p You don't have any active swap requests yet. 
+            p Start by searching for a skill you'd like to learn!
+            a.btn-primary(href="/browseskills") Find a Partner

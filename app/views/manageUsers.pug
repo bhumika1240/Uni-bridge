@@ -1,0 +1,85 @@
+extends layout
+
+block content
+  .dashboard-container
+    .navbar
+      .nav-left
+        h1 Uni-Bridge
+      .nav-right
+        span Admin: #{user.firstname}
+
+    .dashboard-body
+      aside.sidebar
+        ul.nav-list
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile/view") My Profile
+          li: a.active(href="/admin/users") User Management
+          li: a(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a(href="/settings") Settings
+          hr
+          li: a(href="/logout") Logout
+
+      main.main-content
+        //- Alerts
+        if query && query.msg === 'UserUpdated'
+          .alert.success User profile updated successfully!
+        
+        if query && query.msg === 'UserDeleted'
+          .alert.warning User has been permanently removed.
+
+        if query && query.msg === 'ErrorSelfDelete'
+          .alert.danger Error: You cannot delete yourself.
+
+        .header
+          h2 User Management
+          p Total Students: #{allUsers ? allUsers.length : 0}
+
+        if allUsers && allUsers.length > 0
+          table.table
+            thead
+              tr
+                th Student
+                th Contact
+                th Management & Skills
+                th Actions
+            tbody
+              each u in allUsers
+                tr
+                  td
+                    strong #{u.firstname} #{u.lastname}
+                    br
+                    small Joined: #{new Date(u.created_at).toLocaleDateString()}
+                  
+                  td #{u.email}
+                  
+                  td
+                    form(id=`update-form-${u.id}` action=`/admin/update/${u.id}` method="POST")
+                      div
+                        label Skills:
+                        input(type="text" name="skills" value=u.skills placeholder="Java, Python...")
+                      
+                      div
+                        label Availability:
+                        input(type="text" name="availability" value=u.availability placeholder="Mon 2-4pm")
+
+                      div
+                        label Student Status:
+                        select(name="status")
+                          option(value="Active" selected=u.status==='Active') Active
+                          option(value="Flagged" selected=u.status==='Flagged') Flagged
+                          option(value="Suspended" selected=u.status==='Suspended') Suspended
+
+                      div
+                        label Admin Review:
+                        textarea(name="review" rows="2" placeholder="Notes about this student...") #{u.review}
+                  
+                  td
+                    button(type="submit" form=`update-form-${u.id}`) Save Changes
+                    br
+                    br
+                    form(action=`/admin/delete/${u.id}` method="POST" onsubmit="return confirm('Delete this user?')")
+                      button(type="submit") Delete User
+        else
+          p No students found in the database.

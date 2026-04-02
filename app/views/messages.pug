@@ -1,5 +1,40 @@
 extends layout
 
 block content
-  h1 Messages
-  p View your messages here.
+  .dashboard-container
+    .navbar: h1 Uni-Bridge
+
+    .dashboard-body
+      .sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile/view") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a(href="/browseskills") Browse Skills
+          li: a.active(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      .main-content
+        .section-header
+          h2 My Messages
+          if inbox && inbox.length > 0
+            span.count-badge #{inbox.length} Conversations
+
+        if inbox && inbox.length > 0
+          .inbox-list
+            each chat in inbox
+              a.inbox-card(href="/chat/" + chat.contact_id)
+                .inbox-item-inner
+                  img.avatar-mid(src=chat.profile_picture || "/images/default-avatar.png")
+                  .inbox-info
+                    .inbox-header
+                      h3 #{chat.firstname} #{chat.lastname}
+                      span.time #{new Date(chat.last_message_time).toLocaleDateString()}
+                    p.last-msg #{chat.last_message.substring(0, 60)}#{chat.last_message.length > 60 ? '...' : ''}
+        else
+          .empty-inbox
+            .empty-icon ✉️
+            h3 Your inbox is empty
+            p Search for students to start a conversation!
+            a.btn-primary(href="/browseskills") Browse Students

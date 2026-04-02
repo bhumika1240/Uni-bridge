@@ -1,0 +1,105 @@
+extends layout
+
+block content
+  //- 1. Data Safety: Handle potential String vs Array issues from MySQL
+  - const safeMe = user || { skills: [] }
+  - const student = targetUser || {}
+  
+  //- Ensure skills is an array even if DB returns a string
+  - let displaySkills = []
+  if student.skills
+    - displaySkills = Array.isArray(student.skills) ? student.skills : JSON.parse(student.skills || '[]')
+  
+  //- Ensure availability is an array
+  - let displayAvailability = []
+  if student.availability
+    - displayAvailability = Array.isArray(student.availability) ? student.availability : JSON.parse(student.availability || '[]')
+
+  .dashboard-container
+    .navbar
+      h1 Uni-Bridge
+
+    .dashboard-body
+      .sidebar
+        ul
+          li: a(href="/dashboard") Dashboard
+          li: a(href="/profile/view") My Profile
+          li: a(href="/myswaps") My Swaps
+          li: a.active(href="/browseskills") Browse Skills
+          li: a(href="/messages") Messages
+          li: a(href="/settings") Settings
+          li: a(href="/logout") Logout
+
+      .main-content
+        .profile-header
+          .profile-info-row
+            img.profile-avatar(src=student.profilePicture || "/images/default-avatar.png" alt="Profile Picture")
+            .profile-text
+              h2 #{student.firstname} #{student.lastname}
+              p.role-badge Student Expert
+              .header-actions.mt-2
+                //- --- NEW FEATURE: CHAT BUTTON ---
+                a.btn.btn-outline-primary.btn-sm(href="/chat/" + student.id)
+                  i.fas.fa-comments.me-1
+                  |  Send Message
+
+        .profile-grid
+          //- Left Column: Skills and Availability
+          .profile-left-col
+            .profile-card
+              h3 Skills Offered
+              if displaySkills.length > 0
+                ul.skill-list
+                  each skill in displaySkills
+                    li.skill-tag #{skill}
+              else
+                p.text-muted This student hasn't listed any skills yet.
+
+            .profile-card
+              h3 Weekly Availability
+              if displayAvailability.length > 0
+                table.availability-table
+                  thead
+                    tr
+                      th Day
+                      th From
+                      th To
+                  tbody
+                    each slot in displayAvailability
+                      tr
+                        td #{slot.day}
+                        td #{slot.from}
+                        td #{slot.to}
+              else
+                p.text-muted No availability slots listed.
+
+          //- Right Column: The Swap Request Form
+          .profile-right-col
+            .profile-card.highlight-card
+              h3 Start a Skill Swap
+              p.subtitle Propose a trade with #{student.firstname}
+              
+              form(action="/swaps/create" method="POST")
+                input(type="hidden" name="providerId" value=student.id)
+                
+                .form-group.mb-3
+                  label(for="skillRequested") Skill I want to learn:
+                  select.form-control(name="skillRequested" required)
+                    option(value="" disabled selected) Select their skill...
+                    each s in displaySkills
+                      option(value=s) #{s}
+
+                .form-group.mb-3
+                  label(for="skillOffered") Skill I will teach in return:
+                  select.form-control(name="skillOffered" required)
+                    option(value="" disabled selected) Select your skill...
+                    - let mySkillsArr = Array.isArray(safeMe.skills) ? safeMe.skills : JSON.parse(safeMe.skills || '[]')
+                    each mySkill in mySkillsArr
+                      option(value=mySkill) #{mySkill}
+
+                button.btn.btn-primary.w-100(type="submit") Send Swap Request
+                p.note-text.text-center.mt-2(style="font-size: 0.85rem; color: #666;") 
+                  | This will notify #{student.firstname} immediately.
+
+        .action-footer.mt-4
+          a.btn.btn-link(href="/browseskills") ← Back to Search results
