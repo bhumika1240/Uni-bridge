@@ -5,7 +5,7 @@ block content
   - const safeMe = user || { skills: [] }
   - const student = targetUser || {}
   
-  //- Ensure skills is an array even if DB returns a string
+  //- Ensure skills is an array
   - let displaySkills = []
   if student.skills
     - displaySkills = Array.isArray(student.skills) ? student.skills : JSON.parse(student.skills || '[]')
@@ -16,90 +16,99 @@ block content
     - displayAvailability = Array.isArray(student.availability) ? student.availability : JSON.parse(student.availability || '[]')
 
   .dashboard-container
-    .navbar
-      h1 Uni-Bridge
+    //- Use the global sidebar fragment
+    - const activePage = 'browse'
+    include _sidebar
 
-    .dashboard-body
-      .sidebar
-        ul
-          li: a(href="/dashboard") Dashboard
-          li: a(href="/profile/view") My Profile
-          li: a(href="/myswaps") My Swaps
-          li: a.active(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a(href="/settings") Settings
-          li: a(href="/logout") Logout
+    .main-area
+      header.navbar
+        .nav-left
+          h2 Student Profile
+        .nav-right
+          a.btn.btn-outline-primary.btn-sm(href="/chat/" + student.id)
+            i.fas.fa-comments.me-1
+            | Send Message
 
-      .main-content
-        .profile-header
-          .profile-info-row
-            img.profile-avatar(src=student.profilePicture || "/images/default-avatar.png" alt="Profile Picture")
-            .profile-text
-              h2 #{student.firstname} #{student.lastname}
-              p.role-badge Student Expert
-              .header-actions.mt-2
-                //- --- NEW FEATURE: CHAT BUTTON ---
-                a.btn.btn-outline-primary.btn-sm(href="/chat/" + student.id)
-                  i.fas.fa-comments.me-1
-                  |  Send Message
+      main.main-content
+        header.content-header
+          .d-flex.align-items-center.gap-3
+            img.profile-avatar(
+              src=student.profilePicture || "/images/default-avatar.png" 
+              alt="Profile Picture"
+              style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;"
+            )
+            div
+              h2.mb-0 #{student.firstname} #{student.lastname}
+              p.text-muted.mb-0 Student Expert
 
-        .profile-grid
+        .row
           //- Left Column: Skills and Availability
-          .profile-left-col
-            .profile-card
-              h3 Skills Offered
+          .col-md-7
+            .stat-card.mb-4
+              h3 
+                i.fas.fa-graduation-cap.me-2.text-primary
+                | Skills Offered
+              hr
               if displaySkills.length > 0
-                ul.skill-list
+                .skills-tag-container.mt-3(style="display: flex; flex-wrap: wrap; gap: 8px;")
                   each skill in displaySkills
-                    li.skill-tag #{skill}
+                    span.skill-tag(style="background: #eef2ff; color: #4f46e5; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 500;") #{skill}
               else
                 p.text-muted This student hasn't listed any skills yet.
 
-            .profile-card
-              h3 Weekly Availability
+            .stat-card
+              h3 
+                i.fas.fa-calendar-alt.me-2.text-primary
+                | Weekly Availability
+              hr
               if displayAvailability.length > 0
-                table.availability-table
+                table.table.table-borderless.mt-3
                   thead
                     tr
-                      th Day
-                      th From
-                      th To
+                      th.text-muted.small Day
+                      th.text-muted.small From
+                      th.text-muted.small To
                   tbody
                     each slot in displayAvailability
                       tr
-                        td #{slot.day}
+                        td(style="font-weight: 600;") #{slot.day}
                         td #{slot.from}
                         td #{slot.to}
               else
                 p.text-muted No availability slots listed.
 
           //- Right Column: The Swap Request Form
-          .profile-right-col
-            .profile-card.highlight-card
+          .col-md-5
+            .stat-card(style="border: 2px solid #4f46e5; background: #fafbff;")
               h3 Start a Skill Swap
-              p.subtitle Propose a trade with #{student.firstname}
+              p.text-muted.small Propose a trade with #{student.firstname}
               
-              form(action="/swaps/create" method="POST")
+              form.mt-3(action="/swaps/create" method="POST")
                 input(type="hidden" name="providerId" value=student.id)
                 
-                .form-group.mb-3
-                  label(for="skillRequested") Skill I want to learn:
+                .mb-3
+                  label.form-label.small(for="skillRequested") Skill I want to learn:
                   select.form-control(name="skillRequested" required)
                     option(value="" disabled selected) Select their skill...
                     each s in displaySkills
                       option(value=s) #{s}
 
-                .form-group.mb-3
-                  label(for="skillOffered") Skill I will teach in return:
+                .mb-3
+                  label.form-label.small(for="skillOffered") Skill I will teach in return:
                   select.form-control(name="skillOffered" required)
                     option(value="" disabled selected) Select your skill...
                     - let mySkillsArr = Array.isArray(safeMe.skills) ? safeMe.skills : JSON.parse(safeMe.skills || '[]')
                     each mySkill in mySkillsArr
                       option(value=mySkill) #{mySkill}
 
-                button.btn.btn-primary.w-100(type="submit") Send Swap Request
-                p.note-text.text-center.mt-2(style="font-size: 0.85rem; color: #666;") 
+                button.btn.btn-primary.w-100(type="submit") 
+                  i.fas.fa-paper-plane.me-2
+                  | Send Swap Request
+                
+                p.text-center.mt-3(style="font-size: 0.75rem; color: #888;") 
                   | This will notify #{student.firstname} immediately.
 
-        .action-footer.mt-4
-          a.btn.btn-link(href="/browseskills") ← Back to Search results
+        .mt-4
+          a.btn.btn-link.text-decoration-none(href="/browseskills") 
+            i.fas.fa-arrow-left.me-2
+            | Back to Search results

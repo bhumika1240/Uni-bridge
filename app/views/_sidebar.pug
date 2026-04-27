@@ -1,0 +1,24 @@
+aside.sidebar
+  h1 Uni-Bridge
+  ul
+    li: a(href="/dashboard" class=(activePage === 'dashboard' ? 'active' : ''))
+      i.fas.fa-th-large 
+      span  Dashboard
+    li: a(href="/profile/view" class=(activePage === 'profile' ? 'active' : ''))
+      i.fas.fa-user
+      span  My Profile
+    li: a(href="/myswaps" class=(activePage === 'swaps' ? 'active' : ''))
+      i.fas.fa-exchange-alt
+      span  My Swaps
+    li: a(href="/browseskills" class=(activePage === 'browse' ? 'active' : ''))
+      i.fas.fa-search
+      span  Browse Skills
+    li: a(href="/messages" class=(activePage === 'messages' ? 'active' : ''))
+      i.fas.fa-envelope
+      span  Messages
+    li: a(href="/settings" class=(activePage === 'settings' ? 'active' : ''))
+      i.fas.fa-cog
+      span  Settings
+    li: a(href="/logout")
+      i.fas.fa-sign-out-alt
+      span  Logout

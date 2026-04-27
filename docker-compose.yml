@@ -1,14 +1,11 @@
-
-
 services:
   web:
     build:
       context: ./
     volumes:
       - .:/src
-    command: supervisor -e 'js,pug,html' index.js
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       - db
     env_file:

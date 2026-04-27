@@ -1,54 +1,73 @@
 extends layout
 
 block content
+  //- 1. Data Safety: Handle JSON strings or Arrays from Database
   - const safeUser = user || {}
+  - const displaySkills = Array.isArray(safeUser.skills) ? safeUser.skills : JSON.parse(safeUser.skills || '[]')
+  - const displayAvailability = Array.isArray(safeUser.availability) ? safeUser.availability : JSON.parse(safeUser.availability || '[]')
 
-  // Top Navbar
-  .navbar
-    h1 Uni-Bridge
+  .dashboard-container
+    //- 2. Sidebar Fragment
+    - const activePage = 'profile'
+    include _sidebar
 
-  // Dashboard Layout
-  .dashboard-body
+    .main-area
+      //- 3. Top Navbar
+      header.navbar
+        .nav-left
+          h2 My Student Profile
+        .nav-right
+          a.btn.btn-outline-primary.btn-sm(href="/profile/edit")
+            i.fas.fa-user-edit.me-1
+            | Edit Profile
 
-    // Sidebar
-    .sidebar
-      ul
-          li: a(href="/dashboard") Dashboard
-          li: a.active(href="/profile/view") My Profile
-          li: a(href="/myswaps") My Swaps
-          li: a(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a(href="/settings") Settings
-          li: a(href="/logout") Logout
+      //- 4. Main Scrollable Content
+      main.main-content
+        .profile-view-wrapper
+          //- Profile Header Card
+          .stat-card.profile-header-card.text-center.mb-4
+            img.profile-avatar.mb-3(
+              src=safeUser.profilePicture || "/images/default-avatar.png",
+              alt="Profile Picture",
+              style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #f0f2f5;"
+            )
+            h1(style="margin: 0; font-size: 1.8rem;") #{safeUser.firstname} #{safeUser.lastname}
+            p.text-muted Student Member
 
-    // Main Content
-    .main-content
-      .container.mt-4
+          .row
+            //- Skills Column
+            .col-md-6
+              .stat-card(style="height: 100%;")
+                h3 
+                  i.fas.fa-graduation-cap.me-2.text-primary
+                  | Skills Offered
+                hr
+                if displaySkills.length > 0
+                  .skills-tag-container.mt-3(style="display: flex; flex-wrap: wrap; gap: 8px;")
+                    each skill in displaySkills
+                      span.skill-tag(style="background: #eef2ff; color: #4f46e5; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 500;") #{skill}
+                else
+                  p.text-muted.mt-3 No skills listed yet. Click edit to add some!
 
-        // Profile Header
-        .profile-header
-          img.profile-pic-mini(
-            src=safeUser.profilePicture || "/images/default-avatar.png",
-            alt="Profile Picture"
-          )
-          h1 #{safeUser.firstname} #{safeUser.lastname}
+            //- Availability Column
+            .col-md-6
+              .stat-card(style="height: 100%;")
+                h3 
+                  i.fas.fa-calendar-alt.me-2.text-primary
+                  | Weekly Availability
+                hr
+                if displayAvailability.length > 0
+                  table.table.table-borderless.mt-3
+                    tbody
+                      each slot in displayAvailability
+                        tr
+                          td(style="font-weight: 600; padding-left: 0;") #{slot.day}
+                          td.text-end(style="color: #666;") #{slot.from} - #{slot.to}
+                else
+                  p.text-muted.mt-3 Availability not set.
 
-        // Profile Info
-        .profile-details
-          p
-            strong Skills: 
-            //- Changed this line to handle the array properly
-            if safeUser.skills && safeUser.skills.length > 0
-              span= safeUser.skills.join(', ')
-            else
-              span N/A
-
-          h3 Availability
-          if safeUser.availability && safeUser.availability.length > 0
-            ul
-              each slot in safeUser.availability
-                li #{slot.day}: #{slot.from} - #{slot.to}
-          else
-            p N/A
-
-          a.btn.btn-primary.mt-3(href="/profile/edit") Edit My Profile
+        //- Action Footer
+        .text-center.mt-4
+          a.btn.btn-primary(href="/profile/edit", style="padding: 10px 30px;") 
+            i.fas.fa-edit.me-2
+            | Edit My Profile

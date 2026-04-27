@@ -2,23 +2,24 @@ extends layout
 
 block content
   .dashboard-container
-    .navbar: h1 Uni-Bridge
+    //- Tells the sidebar which link to highlight
+    - const activePage = 'dashboard'
+    include _sidebar
 
-    .dashboard-body
-      .sidebar
-        ul
-          li: a.active(href="/dashboard") Dashboard
-          li: a(href="/profile/view") My Profile
-          li: a(href="/myswaps") My Swaps
-          li: a(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a(href="/settings") Settings
-          li: a(href="/logout") Logout
+    .main-area
+      //- Top Navbar
+      header.navbar
+        h2 Dashboard Overview
+        .user-meta
+          span Welcome, #{user.firstname}
 
-      .main-content
-        //- Ensure this h2 is indented exactly the same as the sidebar div
-        h2 Welcome to Dashboard, #{user.firstname} 👋
+      //- Scrollable Content Section
+      main.main-content
+        header.content-header
+          h2 Welcome back, #{user.firstname}!
+          p.text-muted Here is what's happening with your skill swaps today.
         
+        //- Stats Grid
         .stats-grid
           .stat-card
             h3 Skills
@@ -26,3 +27,8 @@ block content
           .stat-card
             h3 Swaps
             p You have #{user.pendingSwaps} pending requests.
+          
+          //- Example of a third card to fill the grid
+          .stat-card
+            h3 Messages
+            p Check your inbox for new swap proposals.

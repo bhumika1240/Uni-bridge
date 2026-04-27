@@ -2,71 +2,72 @@ extends layout
 
 block content
   .dashboard-container
-    .navbar
-      h1 Uni-Bridge
+    //- Sidebar stays in the first grid column (300px)
+    - const activePage = 'swaps'
+    include _sidebar
 
-    .dashboard-body
-      .sidebar
-        ul
-          li: a(href="/dashboard") Dashboard
-          li: a(href="/profile/view") My Profile
-          li: a.active(href="/myswaps") My Swaps
-          li: a(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a(href="/settings") Settings
-          li: a(href="/logout") Logout
+    //- Main Area stays in the second grid column (1fr)
+    .main-area
+      header.navbar
+        .nav-left
+          h2 My Skill Swaps
+        .nav-right
+          if swaps && swaps.length > 0
+            span.count-badge(style="background: var(--primary); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;") 
+              | #{swaps.length} Total Swaps
 
-      .main-content
-        h2 My Skill Swaps
-        
-        if swaps && swaps.length > 0
-          .swaps-list
-            each swap in swaps
-              //- This class (status-pending, status-accepted, etc.) helps with styling
-              .swap-card(class=`status-${swap.status.toLowerCase()}`)
-                .swap-header
-                  span.status-badge(class=`badge-${swap.status.toLowerCase()}`) #{swap.status.toUpperCase()}
-                  span.date Sent on: #{new Date(swap.created_at).toLocaleDateString()}
-                
-                .swap-details
-                  //- Case 1: You are the one who SENT the request
-                  if swap.requester_id == user.id
-                    .swap-info
-                      img.avatar-mini(src=swap.provider_pic || "/images/default-avatar.png")
-                      div
-                        p You requested <strong>#{swap.skill_requested}</strong> from <strong>#{swap.provider_name}</strong>
-                        p.offer-text You offered to teach: #{swap.skill_offered}
+      main.main-content
+        //- Using your .stat-card for the list container
+        .stat-card
+          header.content-header.mb-4
+            h2 Your Requests & Offers
+            p.text-muted Track the status of your skill exchange proposals.
+          
+          if swaps && swaps.length > 0
+            .swaps-list
+              each swap in swaps
+                //- .swap-card fits inside the main .stat-card
+                .swap-card(class=`status-${swap.status.toLowerCase()}` style="border-left: 4px solid var(--primary); padding: 1.5rem; background: #f9fafb; border-radius: 12px; margin-bottom: 1.5rem;")
+                  .swap-header(style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;")
+                    span.status-badge(class=`badge-${swap.status.toLowerCase()}` style="font-weight: bold; text-transform: uppercase; font-size: 0.75rem;") #{swap.status}
+                    span.date(style="color: var(--text-muted); font-size: 0.85rem;")
+                      i.far.fa-calendar-alt.me-1
+                      | #{new Date(swap.created_at).toLocaleDateString()}
                   
-                  //- Case 2: You are the one RECEIVING the request
-                  else
-                    .swap-info
-                      img.avatar-mini(src=swap.requester_pic || "/images/default-avatar.png")
+                  .swap-details(style="display: flex; align-items: center; gap: 15px;")
+                    if swap.requester_id == user.id
+                      img.avatar-mini(src=swap.provider_pic || "/images/default-avatar.png" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;")
                       div
-                        p <strong>#{swap.requester_name}</strong> wants to learn <strong>#{swap.skill_requested}</strong> from you
-                        p.offer-text They offered to teach: #{swap.skill_offered}
-                
-                //- ACTIONS: Only show buttons if pending AND you are the recipient (provider)
-                if swap.status === 'pending' && swap.provider_id == user.id
-                  .swap-actions
-                    form(action="/swaps/action" method="POST" style="display:inline")
-                      input(type="hidden" name="swapId" value=swap.id)
-                      input(type="hidden" name="action" value="accepted")
-                      button.btn-accept(type="submit") Accept Request
+                        p(style="margin: 0;") You requested <strong>#{swap.skill_requested}</strong> from <strong>#{swap.provider_name}</strong>
+                        p.offer-text(style="margin: 0; color: var(--text-muted); font-size: 0.9rem;") You offered: #{swap.skill_offered}
                     
-                    form(action="/swaps/action" method="POST" style="display:inline")
-                      input(type="hidden" name="swapId" value=swap.id)
-                      input(type="hidden" name="action" value="rejected")
-                      button.btn-decline(type="submit") Decline
-                
-                //- If accepted, show a link to message the person
-                if swap.status === 'accepted'
-                  .swap-actions
-                    - const partnerId = (swap.requester_id == user.id) ? swap.provider_id : swap.requester_id
-                    a.btn-message(href=`/messages/chat/${partnerId}`) Send Message
+                    else
+                      img.avatar-mini(src=swap.requester_pic || "/images/default-avatar.png" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;")
+                      div
+                        p(style="margin: 0;") <strong>#{swap.requester_name}</strong> wants to learn <strong>#{swap.skill_requested}</strong>
+                        p.offer-text(style="margin: 0; color: var(--text-muted); font-size: 0.9rem;") They offered: #{swap.skill_offered}
+                  
+                  .swap-actions.mt-3(style="border-top: 1px solid #eee; padding-top: 1rem; margin-top: 1rem;")
+                    if swap.status === 'pending' && swap.provider_id == user.id
+                      form(action="/swaps/action" method="POST" style="display:inline")
+                        input(type="hidden" name="swapId" value=swap.id)
+                        input(type="hidden" name="action" value="accepted")
+                        button.btn.btn-primary.btn-sm(type="submit") Accept Request
+                      
+                      form(action="/swaps/action" method="POST" style="display:inline; margin-left: 10px;")
+                        input(type="hidden" name="swapId" value=swap.id)
+                        input(type="hidden" name="action" value="rejected")
+                        button.btn.btn-outline-danger.btn-sm(type="submit" style="background: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 5px 10px; border-radius: 8px;") Decline
+                    
+                    if swap.status === 'accepted'
+                      - const partnerId = (swap.requester_id == user.id) ? swap.provider_id : swap.requester_id
+                      a.btn.btn-primary.btn-sm(href=`/messages/chat/${partnerId}`) 
+                        i.fas.fa-comment-dots.me-1
+                        | Send Message
 
-        else
-          .empty-state
-            .empty-icon 🤝
-            p You don't have any active swap requests yet. 
-            p Start by searching for a skill you'd like to learn!
-            a.btn-primary(href="/browseskills") Find a Partner
+          else
+            .empty-state(style="text-align: center; padding: 3rem;")
+              .empty-icon(style="font-size: 3rem;") 🤝
+              h3 No Active Swaps
+              p.text-muted You don't have any active skill swap requests yet.
+              a.btn.btn-primary.mt-3(href="/browseskills") Find a Partner

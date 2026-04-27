@@ -2,95 +2,113 @@ extends layout
 
 block content
   .dashboard-container
-    .navbar
-      h1 Uni-Bridge
+    //- Tells the sidebar to highlight the Settings link
+    - const activePage = 'settings'
+    include _sidebar
 
-    .dashboard-body
-      // Sidebar
-      .sidebar
-        ul
-          li: a(href="/dashboard") Dashboard
-          li: a(href="/profile/view") My Profile
-          li: a(href="/myswaps") My Swaps
-          li: a(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a.active(href="/settings") Settings
-          li: a(href="/logout") Logout
-
-      // Main content
-      .main-content
-        .container.mt-4
+    .main-area
+      //- Top Navbar
+      header.navbar
+        .nav-left
           h2 Account Settings
+        .nav-right
+          span.text-muted User ID: ##{user.id}
 
-          // ===== Profile Info Update =====
-          .section
-            h3 Update Profile Information
-            if errorProfile
-              .alert.alert-danger= errorProfile
-            if successProfile
-              .alert.alert-success= successProfile
+      //- Main Content Section
+      main.main-content
+        header.content-header
+          h2 Manage Your Account
+          p.text-muted Update your personal information and security settings.
 
-            form(action="/settings/update" method="POST")
-              .mb-3
-                label(for="firstname") First Name
-                input#firstname.form-control(
-                  type="text",
-                  name="firstname",
-                  value=user.firstname || "",
-                  required
-                )
+        .row
+          //- Profile Update Column
+          .col-md-6.mb-4
+            .stat-card
+              h3 
+                i.fas.fa-user-cog.me-2.text-primary
+                | Profile Information
+              hr
+              
+              if errorProfile
+                .alert.alert-danger.small= errorProfile
+              if successProfile
+                .alert.alert-success.small= successProfile
 
-              .mb-3
-                label(for="lastname") Last Name
-                input#lastname.form-control(
-                  type="text",
-                  name="lastname",
-                  value=user.lastname || "",
-                  required
-                )
+              form(action="/settings/update" method="POST")
+                .mb-3
+                  label.form-label(for="firstname") First Name
+                  input#firstname.form-control(
+                    type="text",
+                    name="firstname",
+                    value=user.firstname || "",
+                    required
+                  )
 
-              .mb-3
-                label(for="email") Email
-                input#email.form-control(
-                  type="email",
-                  name="email",
-                  value=user.email || "",
-                  required
-                )
+                .mb-3
+                  label.form-label(for="lastname") Last Name
+                  input#lastname.form-control(
+                    type="text",
+                    name="lastname",
+                    value=user.lastname || "",
+                    required
+                  )
 
-              button.btn.btn-success.mt-2(type="submit") Update Profile
+                .mb-3
+                  label.form-label(for="email") Email Address
+                  input#email.form-control(
+                    type="email",
+                    name="email",
+                    value=user.email || "",
+                    required
+                  )
 
-          // ===== Password Change =====
-          .section.mt-4
-            h3 Change Password
-            if errorPassword
-              .alert.alert-danger= errorPassword
-            if successPassword
-              .alert.alert-success= successPassword
+                button.btn.btn-success.w-100.mt-2(type="submit") 
+                  i.fas.fa-save.me-2
+                  | Update Profile
 
-            form(action="/settings/change-password" method="POST")
-              .mb-3
-                label(for="currentPassword") Current Password
-                input#currentPassword.form-control(
-                  type="password",
-                  name="currentPassword",
-                  required
-                )
+          //- Password Change Column
+          .col-md-6.mb-4
+            .stat-card
+              h3 
+                i.fas.fa-lock.me-2.text-primary
+                | Change Password
+              hr
 
-              .mb-3
-                label(for="newPassword") New Password
-                input#newPassword.form-control(
-                  type="password",
-                  name="newPassword",
-                  required
-                )
+              if errorPassword
+                .alert.alert-danger.small= errorPassword
+              if successPassword
+                .alert.alert-success.small= successPassword
 
-              .mb-3
-                label(for="confirmPassword") Confirm New Password
-                input#confirmPassword.form-control(
-                  type="password",
-                  name="confirmPassword",
-                  required
-                )
+              form(action="/settings/change-password" method="POST")
+                .mb-3
+                  label.form-label(for="currentPassword") Current Password
+                  input#currentPassword.form-control(
+                    type="password",
+                    name="currentPassword",
+                    required
+                    placeholder="••••••••"
+                  )
 
-              button.btn.btn-primary.mt-2(type="submit") Change Password
+                .mb-3
+                  label.form-label(for="newPassword") New Password
+                  input#newPassword.form-control(
+                    type="password",
+                    name="newPassword",
+                    required
+                    placeholder="Min. 8 characters"
+                  )
+
+                .mb-3
+                  label.form-label(for="confirmPassword") Confirm New Password
+                  input#confirmPassword.form-control(
+                    type="password",
+                    name="confirmPassword",
+                    required
+                    placeholder="Repeat new password"
+                  )
+
+                button.btn.btn-primary.w-100.mt-2(type="submit") 
+                  i.fas.fa-key.me-2
+                  | Update Password
+
+      

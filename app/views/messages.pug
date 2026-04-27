@@ -2,39 +2,38 @@ extends layout
 
 block content
   .dashboard-container
-    .navbar: h1 Uni-Bridge
+    //- Tells the sidebar to highlight the Messages link
+    - const activePage = 'messages'
+    include _sidebar
 
-    .dashboard-body
-      .sidebar
-        ul
-          li: a(href="/dashboard") Dashboard
-          li: a(href="/profile/view") My Profile
-          li: a(href="/myswaps") My Swaps
-          li: a(href="/browseskills") Browse Skills
-          li: a.active(href="/messages") Messages
-          li: a(href="/settings") Settings
-          li: a(href="/logout") Logout
-
-      .main-content
-        .section-header
-          h2 My Messages
+    .main-area
+      header.navbar
+        .nav-left
+          h2 Messages
+        .nav-right
           if inbox && inbox.length > 0
             span.count-badge #{inbox.length} Conversations
+
+      main.main-content
+        header.content-header
+          h2 My Conversations
+          p.text-muted Stay in touch with your skill swap partners.
 
         if inbox && inbox.length > 0
           .inbox-list
             each chat in inbox
-              a.inbox-card(href="/chat/" + chat.contact_id)
+              a.inbox-card(href="/chat/" + chat.contact_id class=(chat.unread ? 'unread' : ''))
                 .inbox-item-inner
-                  img.avatar-mid(src=chat.profile_picture || "/images/default-avatar.png")
+                  img.avatar-mid(src=chat.profile_picture || "/images/default-avatar.png" alt=chat.firstname)
                   .inbox-info
                     .inbox-header
                       h3 #{chat.firstname} #{chat.lastname}
                       span.time #{new Date(chat.last_message_time).toLocaleDateString()}
-                    p.last-msg #{chat.last_message.substring(0, 60)}#{chat.last_message.length > 60 ? '...' : ''}
+                    p.last-msg 
+                      | #{chat.last_message.substring(0, 60)}#{chat.last_message.length > 60 ? '...' : ''}
         else
-          .empty-inbox
+          .empty-state
             .empty-icon ✉️
             h3 Your inbox is empty
             p Search for students to start a conversation!
-            a.btn-primary(href="/browseskills") Browse Students
+            a.btn.btn-primary.mt-3(href="/browseskills") Browse Students

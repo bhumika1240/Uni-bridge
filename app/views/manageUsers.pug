@@ -2,27 +2,21 @@ extends layout
 
 block content
   .dashboard-container
-    .navbar
-      .nav-left
-        h1 Uni-Bridge
-      .nav-right
-        span Admin: #{user.firstname}
+    //- Tells the sidebar to highlight the Admin link
+    - const activePage = 'admin'
+    include _sidebar
 
-    .dashboard-body
-      aside.sidebar
-        ul.nav-list
-          li: a(href="/dashboard") Dashboard
-          li: a(href="/profile/view") My Profile
-          li: a.active(href="/admin/users") User Management
-          li: a(href="/myswaps") My Swaps
-          li: a(href="/browseskills") Browse Skills
-          li: a(href="/messages") Messages
-          li: a(href="/settings") Settings
-          hr
-          li: a(href="/logout") Logout
+    .main-area
+      header.navbar
+        .nav-left
+          h2 Admin Control Panel
+        .nav-right
+          span.admin-badge 
+            i.fas.fa-user-shield 
+            |  Admin: #{user.firstname}
 
       main.main-content
-        //- Alerts
+        //- Feedback Alerts
         if query && query.msg === 'UserUpdated'
           .alert.success User profile updated successfully!
         
@@ -32,54 +26,60 @@ block content
         if query && query.msg === 'ErrorSelfDelete'
           .alert.danger Error: You cannot delete yourself.
 
-        .header
+        header.content-header
           h2 User Management
-          p Total Students: #{allUsers ? allUsers.length : 0}
+          p.text-muted There are #{allUsers ? allUsers.length : 0} students registered in Uni-Bridge.
 
         if allUsers && allUsers.length > 0
-          table.table
-            thead
-              tr
-                th Student
-                th Contact
-                th Management & Skills
-                th Actions
-            tbody
-              each u in allUsers
+          .stat-card(style="overflow-x: auto; padding: 0;")
+            table.table
+              thead
                 tr
-                  td
-                    strong #{u.firstname} #{u.lastname}
-                    br
-                    small Joined: #{new Date(u.created_at).toLocaleDateString()}
-                  
-                  td #{u.email}
-                  
-                  td
-                    form(id=`update-form-${u.id}` action=`/admin/update/${u.id}` method="POST")
-                      div
-                        label Skills:
-                        input(type="text" name="skills" value=u.skills placeholder="Java, Python...")
-                      
-                      div
-                        label Availability:
-                        input(type="text" name="availability" value=u.availability placeholder="Mon 2-4pm")
+                  th Student
+                  th Contact
+                  th Management & Skills
+                  th Actions
+              tbody
+                each u in allUsers
+                  tr
+                    td
+                      strong #{u.firstname} #{u.lastname}
+                      br
+                      small.text-muted Joined: #{new Date(u.created_at).toLocaleDateString()}
+                    
+                    td #{u.email}
+                    
+                    td
+                      form(id=`update-form-${u.id}` action=`/admin/update/${u.id}` method="POST" class="admin-edit-form")
+                        .form-group.mb-2
+                          label(style="font-size: 12px; font-weight: 600;") Skills:
+                          input.form-control(type="text" name="skills" value=u.skills placeholder="Java, Python...")
+                        
+                        .form-group.mb-2
+                          label(style="font-size: 12px; font-weight: 600;") Availability:
+                          input.form-control(type="text" name="availability" value=u.availability placeholder="Mon 2-4pm")
 
-                      div
-                        label Student Status:
-                        select(name="status")
-                          option(value="Active" selected=u.status==='Active') Active
-                          option(value="Flagged" selected=u.status==='Flagged') Flagged
-                          option(value="Suspended" selected=u.status==='Suspended') Suspended
+                        .form-group.mb-2
+                          label(style="font-size: 12px; font-weight: 600;") Student Status:
+                          select.form-control(name="status")
+                            option(value="Active" selected=u.status==='Active') Active
+                            option(value="Flagged" selected=u.status==='Flagged') Flagged
+                            option(value="Suspended" selected=u.status==='Suspended') Suspended
 
-                      div
-                        label Admin Review:
-                        textarea(name="review" rows="2" placeholder="Notes about this student...") #{u.review}
-                  
-                  td
-                    button(type="submit" form=`update-form-${u.id}`) Save Changes
-                    br
-                    br
-                    form(action=`/admin/delete/${u.id}` method="POST" onsubmit="return confirm('Delete this user?')")
-                      button(type="submit") Delete User
+                        .form-group
+                          label(style="font-size: 12px; font-weight: 600;") Admin Review:
+                          textarea.form-control(name="review" rows="2" placeholder="Notes about this student...") #{u.review}
+                    
+                    td
+                      .admin-actions(style="display: flex; flex-direction: column; gap: 10px;")
+                        button.btn.btn-primary.btn-sm(type="submit" form=`update-form-${u.id}`) 
+                          i.fas.fa-save.me-1
+                          | Save Changes
+                        
+                        form(action=`/admin/delete/${u.id}` method="POST" onsubmit="return confirm('Are you sure you want to delete this user? This cannot be undone.')")
+                          button.btn.btn-danger.btn-sm(type="submit" style="width: 100%;") 
+                            i.fas.fa-trash.me-1
+                            | Delete User
         else
-          p No students found in the database.
+          .empty-state
+            p No students found in the database.

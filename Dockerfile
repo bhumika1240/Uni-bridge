@@ -1,24 +1,20 @@
-# Base image to use
-FROM node:latest
+# Use official Node LTS image
+FROM node:20-alpine
 
-# set a working directory
+# Set working directory
 WORKDIR /src
 
-# Copy across project configuration information
-# Install application dependencies
-COPY package*.json /src/
+# Copy package files first (better caching)
+COPY package*.json ./
 
-# Ask npm to install the dependencies
-RUN npm install -g supervisor && npm install && npm install supervisor
+# Install dependencies
+RUN npm install
 
-# Copy across all our files
-COPY . /src
+# Copy rest of the app
+COPY . .
 
-RUN npm install express pug body-parser mysql2 dotenv
-
-#for hash password
-RUN npm install express pug body-parser mysql2 dotenv bcrypt
-# Expose our application port (3000)
+# Expose internal app port (your app runs on 3000)
 EXPOSE 3000
 
-
+# Start app (NO supervisor)
+CMD ["node", "index.js"]

@@ -19,15 +19,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // --- 3. STATIC FILE SERVING ---
-app.use(express.static(path.join(__dirname, "../public")));
-app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
+const staticPath = path.join(__dirname, "../static"); // Create a variable to keep it consistent
+app.use(express.static(staticPath));
+app.use("/uploads", express.static(path.join(staticPath, "uploads")));
 
-// Ensure the upload directory exists
-const uploadDir = path.join(__dirname, "../public/uploads");
+// Ensure the upload directory exists inside STATIC, not public
+const uploadDir = path.join(staticPath, "uploads"); 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
 // --- 4. VIEW ENGINE SETUP ---
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -87,8 +87,7 @@ app.listen(PORT, () => {
   console.log(`-----------------------------------------`);
   console.log(`✅ UNI-BRIDGE SERVER STARTED SUCCESSFULLY`);
   console.log(`📡 Internal Port: ${PORT}`);
-  console.log(`🚀 Access via: http://localhost:3001`);
+  console.log(`🚀 Access via: http://localhost:${PORT}`); // Changed this
   console.log(`-----------------------------------------`);
 });
-
 module.exports = app;

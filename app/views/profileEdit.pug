@@ -1,97 +1,102 @@
-//- views/profileEdit.pug
 extends layout
 
 block content
+  //- 1. Data Safety
   - const safeUser = user || {}
-  - safeUser.skills = safeUser.skills || []
-  - safeUser.availability = safeUser.availability || []
+  - const skillsArr = Array.isArray(safeUser.skills) ? safeUser.skills : JSON.parse(safeUser.skills || '[]')
+  - const availArr = Array.isArray(safeUser.availability) ? safeUser.availability : JSON.parse(safeUser.availability || '[]')
 
-  // Top Navbar
-  .navbar
-    h1 Uni-Bridge
+  .dashboard-container
+    //- 2. Sidebar Fragment
+    - const activePage = 'profile'
+    include _sidebar
 
-  // Dashboard layout
-  .dashboard-body
+    .main-area
+      //- 3. Top Navbar
+      header.navbar
+        .nav-left
+          h2 Edit My Profile
+        .nav-right
+          span Welcome, #{safeUser.firstname}
 
-    // Sidebar
-    .sidebar
-      ul
-        li
-          a(href="/dashboard") Dashboard
-        li
-          a.active(href="/profile/view") My Profile
-        li
-          a(href="/myswaps") My Swaps
-        li
-          a(href="/browseskills") Browse Skills
-        li
-          a(href="/messages") Messages
-        li
-          a(href="/settings") Settings
-        li
-          a(href="/logout") Logout
+      //- 4. Main Scrollable Content
+      main.main-content
+        .container-fluid
+          header.content-header
+            h2 Profile Customization
+            p.text-muted Update your skills and let others know when you are free to swap.
 
-    // Main content
-    .main-content
-      .container.mt-4
-        h1 Edit My Profile
-
-        // Profile picture upload
-        .profile-picture
-          img.profile-edit-pic(
-            src=safeUser.profilePicture || "/images/default-avatar.png",
-            alt="Profile Picture"
-          )
-          form(method="POST", action="/profile/upload-picture", enctype="multipart/form-data")
-            input(type="file", name="profilePicture", accept="image/*")
-            button.btn.btn-primary(type="submit") Upload Picture
-
-        hr
-
-        // Profile skills and availability form
-        form(method="POST", action="/profile/save")
-          h3 Skills
-          .skills-container
-            each skill in safeUser.skills
-              .skill-row
-                input.form-control(type="text", name="skills", value=skill)
-                button.btn.btn-danger(type="button", onclick="this.parentNode.remove()") Remove
-
-            // Empty field to allow adding a new skill
-            .skill-row
-              input.form-control(type="text", name="skills", placeholder="Add new skill")
-              button.btn.btn-danger(type="button", onclick="this.parentNode.remove()") Remove
-
-            // Add skill button
-            button.btn.btn-secondary(type="button", onclick="addSkillInput()") Add Skill
-
-          hr
-
-          h3 Weekly Availability
-          .availability-container
-            each day in ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-              - const dayData = safeUser.availability.find(a => a.day === day) || {}
-              - const checked = !!dayData.day
-              .availability-row
-                input.form-check-input(
-                  type="checkbox",
-                  name=`availability_day_${day}`,
-                  id=`availability_${day}`,
-                  checked=checked
+          .row
+            //- Left Column: Profile Picture
+            .col-md-4
+              .stat-card.text-center
+                h3 Profile Picture
+                img.profile-edit-pic.mb-3(
+                  src=safeUser.profilePicture || "/images/default-avatar.png",
+                  alt="Profile Picture",
+                  style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #eee;"
                 )
-                label.form-check-label(for=`availability_${day}`) #{day}
-                input.form-control(type="time", name=`from_${day}`, value=dayData.from || "09:00")
-                span.to-separator - 
-                input.form-control(type="time", name=`to_${day}`, value=dayData.to || "17:00")
+                form(method="POST", action="/profile/upload-picture", enctype="multipart/form-data")
+                  input.form-control.form-control-sm.mb-2(type="file", name="profilePicture", accept="image/*")
+                  button.btn.btn-primary.btn-sm.w-100(type="submit") Update Photo
 
-          button.btn.btn-primary.mt-3(type="submit") Save Profile
+            //- Right Column: Skills & Availability
+            .col-md-8
+              .stat-card
+                form(method="POST", action="/profile/save")
+                  h3.mb-3 My Skills
+                  .skills-container
+                    each skill in skillsArr
+                      .skill-row.mb-2(style="display: flex; gap: 10px;")
+                        input.form-control(type="text", name="skills", value=skill)
+                        button.btn.btn-outline-danger(type="button", onclick="this.parentNode.remove()") 
+                          i.fas.fa-trash
 
-        // Script for dynamic skill inputs
-        script.
-          function addSkillInput() {
-            const container = document.querySelector('.skills-container');
-            const row = document.createElement('div');
-            row.classList.add('skill-row');
-            row.innerHTML = '<input type="text" name="skills" class="form-control" placeholder="Add new skill"> <button type="button" class="btn btn-danger" onclick="this.parentNode.remove()">Remove</button>';
-            container.insertBefore(row, container.querySelector('button.btn-secondary'));
-          }
+                    //- Add skill button
+                    button.btn.btn-secondary.btn-sm.mt-2(type="button", onclick="addSkillInput()") 
+                      i.fas.fa-plus.me-1
+                      | Add Skill
+
+                  hr.my-4
+
+                  h3.mb-3 Weekly Availability
+                  .availability-container
+                    each day in ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+                      - const dayData = availArr.find(a => a.day === day) || {}
+                      - const checked = !!dayData.day
+                      .availability-row.mb-3(style="display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #f1f1f1; padding-bottom: 10px;")
+                        .form-check(style="min-width: 120px;")
+                          input.form-check-input(
+                            type="checkbox",
+                            name=`availability_day_${day}`,
+                            id=`availability_${day}`,
+                            checked=checked
+                          )
+                          label.form-check-label(for=`availability_${day}`) #{day}
+                        
+                        input.form-control.form-control-sm(type="time", name=`from_${day}`, value=dayData.from || "09:00", style="max-width: 130px;")
+                        span to 
+                        input.form-control.form-control-sm(type="time", name=`to_${day}`, value=dayData.to || "17:00", style="max-width: 130px;")
+
+                  .form-actions.mt-4
+                    button.btn.btn-success.w-100(type="submit") 
+                      i.fas.fa-save.me-2
+                      | Save Profile Settings
+
+    //- 5. Dynamic Script
+    script.
+      function addSkillInput() {
+        const container = document.querySelector('.skills-container');
+        const row = document.createElement('div');
+        row.className = 'skill-row mb-2';
+        row.style.display = 'flex';
+        row.style.gap = '10px';
+        row.innerHTML = `
+          <input type="text" name="skills" class="form-control" placeholder="New skill...">
+          <button type="button" class="btn btn-outline-danger" onclick="this.parentNode.remove()">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        // Insert before the "Add Skill" button
+        container.insertBefore(row, container.querySelector('button.btn-secondary'));
+      }

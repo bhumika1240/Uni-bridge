@@ -1,63 +1,76 @@
 extends layout
 
 block content
-  .container
-    h1 Uni-Bridge
-    h2(style="text-align: center; font-size: 18px; color: #666;") Create Account
+  .auth-page
+    .auth-card(style="max-width: 550px;") 
+      .auth-header
+        h1 Uni-Bridge
+        p Join the community and start swapping skills
 
-    form(action="/signup" method="POST")
-      //- Name Fields
-      input(type="text" name="firstname" placeholder="First Name" required)
-      input(type="text" name="lastname" placeholder="Last Name" required)
+      form(action="/signup" method="POST")
+        //- Name Fields (Side by Side)
+        .row.mb-3
+          .col-md-6
+            label.form-label First Name
+            input.form-control(type="text" name="firstname" placeholder="Jane" required)
+          .col-md-6
+            label.form-label Last Name
+            input.form-control(type="text" name="lastname" placeholder="Doe" required)
 
-      //- Date of Birth
-      label(for="dob" style="font-size: 14px; color: #333; display: block; margin-top: 10px;") Date of Birth
-      input(type="date" name="dob" id="dob" required)
+        //- Date of Birth
+        .mb-3
+          label.form-label(for="dob") Date of Birth
+          input#dob.form-control(type="date" name="dob" required)
 
-      //- Gender Selection
-      .gender-selection
-        p Gender
-        .radio-group
-          label
-            input(type="radio" name="gender" value="male" required)
-            span Male
-          label
-            input(type="radio" name="gender" value="female")
-            span Female
-          label
-            input(type="radio" name="gender" value="other")
-            span Other
+        //- Gender Selection
+        .mb-3.text-start
+          label.form-label Gender
+          .radio-group.d-flex.gap-3.mt-1
+            label.d-flex.align-items-center.gap-1
+              input(type="radio" name="gender" value="male" required)
+              span Male
+            label.d-flex.align-items-center.gap-1
+              input(type="radio" name="gender" value="female")
+              span Female
+            label.d-flex.align-items-center.gap-1
+              input(type="radio" name="gender" value="other")
+              span Other
 
-      //- Credentials
-      input(type="email" name="email" placeholder="Email Address" required)
-      input(type="password" name="password" placeholder="Password" required)
+        //- Credentials
+        .mb-3
+          label.form-label Email Address
+          input.form-control(type="email" name="email" placeholder="student@university.edu" required)
+        
+        .mb-3
+          label.form-label Password
+          input.form-control(type="password" name="password" placeholder="Create a strong password" required)
 
-      //- Policy Terms Box
-      .policy-box(style="border:1px solid #ccc; padding:15px; margin-top:15px; height:160px; overflow-y:auto; background:#f9f9f9; font-size:14px;")
-        h3(style="margin-top:0;") Terms & Conditions
-        ul
-          li
-            strong Academic Integrity:
-            |  Swapping finished assignments or exam solutions is strictly prohibited to prevent collusion.
-          li
-            strong Student Safety:
-            |  Users agree to meet only in university-verified "Safe Zones" (e.g., Library, Student Union).
-          li
-            strong Data Minimalism:
-            |  Only essential data (Name, Student ID, Modules) is collected and stored securely.
-          li
-            strong Verification:
-            |  Users must be verified students of the university community.
+        //- Policy Terms Box
+        .policy-box.mb-3
+          h3 Terms & Conditions
+          ul
+            li
+              strong Academic Integrity: 
+              | No swapping finished assignments.
+            li
+              strong Student Safety: 
+              | Meet only in university-verified "Safe Zones."
+            li
+              strong Data Minimalism: 
+              | We only store essential data securely.
+            li
+              strong Verification: 
+              | You must be a verified student.
 
-      //- Policy Checkbox
-      .policy(style="margin-top:10px;")
-        input(type="checkbox" name="policy" id="policy" required)
-        label(for="policy") I understand and agree to the Terms & Conditions
+        //- Policy Checkbox
+        .form-check.text-start.mb-4
+          input#policy.form-check-input(type="checkbox" name="policy" required)
+          label.form-check-label.small(for="policy") I understand and agree to the Terms & Conditions
 
-      //- Submit Button
-      button(type="submit") Sign Up
+        //- Submit Button
+        button.btn.btn-primary.w-100(type="submit") Create Account
 
-    //- Already have an account link
-    .signup
-      | Already have an account? 
-      a(href="/") Login
+      .auth-footer.mt-4
+        p 
+          | Already have an account? 
+          a(href="/") Login
